@@ -124,10 +124,8 @@ export default function WhatsAppAgent() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showApiKey, setShowApiKey] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
 
   // Admin credentials state
