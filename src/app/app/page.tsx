@@ -74,7 +74,7 @@ import {
   Lock,
   Unlock,
   Github,
-  Update,
+  RefreshCw
   Menu as MenuIcon,
   User,
   ChevronDown,
@@ -138,15 +138,15 @@ export default function WhatsAppAgent() {
   })
 
   // GitHub update state
-  const [updateStatus, setUpdateStatus] = useState<{
+  const [deviceUpdateStatus, setDeviceUpdateStatus] = useState<{
     checking: boolean
-    hasUpdate: boolean
+    deviceUpdate: boolean
     latestVersion: string
     currentVersion: string
     changelog: string[]
   }>({
     checking: false,
-    hasUpdate: false,
+    deviceUpdate: false,
     latestVersion: '1.0.0',
     currentVersion: '1.0.0',
     changelog: []
@@ -585,7 +585,7 @@ export default function WhatsAppAgent() {
 
       setUpdateStatus({
         checking: false,
-        hasUpdate,
+        hasRefreshCw
         latestVersion,
         currentVersion: '1.0.0',
         changelog: hasUpdate ? [
@@ -636,7 +636,7 @@ export default function WhatsAppAgent() {
 
       setUpdateStatus({
         checking: false,
-        hasUpdate: false,
+        deviceUpdate: false,
         latestVersion: updateStatus.latestVersion,
         currentVersion: updateStatus.latestVersion,
         changelog: []
