@@ -1,8 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Check, ArrowRight, Copy, Terminal, Globe, Zap, Lock, MessageSquare } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Check, ArrowRight, Copy, Terminal, Globe, Zap, Lock } from 'lucide-react'
 import Link from 'next/link'
 
 export default function ApiDocsPage() {
@@ -87,23 +87,24 @@ export default function ApiDocsPage() {
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Send a WhatsApp message to a phone number</p>
 
-                    <Card className="bg-muted">
-                      <CardContent className="p-4 space-y-3">
-                        <div>
-                          <p className="text-xs font-semibold mb-2">Request Body:</p>
-                          <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                    <div className="space-y-2">
+                      <Card className="bg-muted">
+                        <CardContent className="p-4 space-y-3">
+                          <div>
+                            <p className="text-xs font-semibold mb-2">Request Body:</p>
+                            <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 {`{
   "to": "6281234567890",
   "message": "Hello! This is a test message.",
   "isGroup": false,
   "variables": true
 }`}
-                          </pre>
-                        </div>
+                            </pre>
+                          </div>
 
-                        <div>
-                          <p className="text-xs font-semibold mb-2">Response:</p>
-                          <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                          <div>
+                            <p className="text-xs font-semibold mb-2">Response:</p>
+                            <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 {`{
   "status": true,
   "message": "Message sent successfully",
@@ -114,10 +115,11 @@ export default function ApiDocsPage() {
     "sentAt": "2024-01-20T10:30:00.000Z"
   }
 }`}
-                          </pre>
-                        </div>
-                      </CardContent>
-                    </Card>
+                            </pre>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
                   <Button size="icon" variant="ghost" onClick={() => handleCopy('/api/send-message')}>
                     <Copy className="h-4 w-4" />
@@ -137,21 +139,22 @@ export default function ApiDocsPage() {
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Get all connected WhatsApp devices</p>
 
-                    <Card className="bg-muted">
-                      <CardContent className="p-4 space-y-3">
-                        <div>
-                          <p className="text-xs font-semibold mb-2">Headers:</p>
-                          <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                    <div className="space-y-2">
+                      <Card className="bg-muted">
+                        <CardContent className="p-4 space-y-3">
+                          <div>
+                            <p className="text-xs font-semibold mb-2">Headers:</p>
+                            <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 {`{
   "Authorization": "Bearer YOUR_API_KEY",
   "Content-Type": "application/json"
 }`}
-                          </pre>
-                        </div>
+                            </pre>
+                          </div>
 
-                        <div>
-                          <p className="text-xs font-semibold mb-2">Response:</p>
-                          <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                          <div>
+                            <p className="text-xs font-semibold mb-2">Response:</p>
+                            <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 {`{
   "status": true,
   "message": "Devices retrieved successfully",
@@ -165,10 +168,11 @@ export default function ApiDocsPage() {
     }
   ]
 }`}
-                          </pre>
-                        </div>
-                      </CardContent>
-                    </Card>
+                            </pre>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
                   <Button size="icon" variant="ghost" onClick={() => handleCopy('/api/devices')}>
                     <Copy className="h-4 w-4" />
@@ -188,11 +192,12 @@ export default function ApiDocsPage() {
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Create a new WhatsApp device</p>
 
-                    <Card className="bg-muted">
-                      <CardContent className="p-4 space-y-3">
-                        <div>
-                          <p className="text-xs font-semibold mb-2">Request Body:</p>
-                          <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                    <div className="space-y-2">
+                      <Card className="bg-muted">
+                        <CardContent className="p-4 space-y-3">
+                          <div>
+                            <p className="text-xs font-semibold mb-2">Request Body:</p>
+                            <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 {`{
   "name": "Support Line",
   "phone": "+6289876543210",
@@ -200,12 +205,12 @@ export default function ApiDocsPage() {
   "bank": "BCA",
   "period": "monthly"
 }`}
-                          </pre>
-                        </div>
+                            </pre>
+                          </div>
 
-                        <div>
-                          <p className="text-xs font-semibold mb-2">Response:</p>
-                          <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                          <div>
+                            <p className="text-xs font-semibold mb-2">Response:</p>
+                            <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 {`{
   "status": true,
   "message": "Device created successfully",
@@ -215,10 +220,11 @@ export default function ApiDocsPage() {
     "qr_url": "https://api.whatsappagent.com/qr/WA003"
   }
 }`}
-                          </pre>
-                        </div>
-                      </CardContent>
-                    </Card>
+                            </pre>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
                   <Button size="icon" variant="ghost" onClick={() => handleCopy('/api/devices')}>
                     <Copy className="h-4 w-4" />
@@ -238,10 +244,12 @@ export default function ApiDocsPage() {
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Get all contacts</p>
 
-                    <Card className="bg-muted">
-                      <CardContent className="p-4">
-                        <p className="text-xs font-semibold mb-2">Response:</p>
-                        <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                    <div className="space-y-2">
+                      <Card className="bg-muted">
+                        <CardContent className="p-4 space-y-3">
+                          <div>
+                            <p className="text-xs font-semibold mb-2">Response:</p>
+                            <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 {`{
   "status": true,
   "message": "Contacts retrieved successfully",
@@ -257,9 +265,11 @@ export default function ApiDocsPage() {
     }
   ]
 }`}
-                        </pre>
-                      </CardContent>
-                    </Card>
+                            </pre>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
                   <Button size="icon" variant="ghost" onClick={() => handleCopy('/api/contacts')}>
                     <Copy className="h-4 w-4" />
@@ -287,18 +297,17 @@ export default function ApiDocsPage() {
 
               <div className="space-y-2">
                 <Card className="bg-muted">
-                  <CardContent className="p-4">
-                    <p className="text-xs font-semibold mb-2">Authorization Header:</p>
-                    <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                  <CardContent className="p-4 space-y-3">
+                    <div>
+                      <p className="text-xs font-semibold mb-2">Authorization Header:</p>
+                      <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 Authorization: Bearer YOUR_API_KEY
-                    </pre>
-                  </CardContent>
-                </Card>
+                      </pre>
+                    </div>
 
-                <Card className="bg-muted">
-                  <CardContent className="p-4">
-                    <p className="text-xs font-semibold mb-2">Example Request:</p>
-                    <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
+                    <div>
+                      <p className="text-xs font-semibold mb-2">Example Request:</p>
+                      <pre className="text-xs overflow-x-auto bg-background p-3 rounded">
 curl -X POST https://api.whatsappagent.com/api/send-message \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
@@ -306,7 +315,8 @@ curl -X POST https://api.whatsappagent.com/api/send-message \
     "to": "6281234567890",
     "message": "Hello!"
   }'
-                    </pre>
+                      </pre>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

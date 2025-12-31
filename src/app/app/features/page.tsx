@@ -1,8 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Smartphone, Send, Users, Shield, Lock, Zap } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { MessageSquare, Smartphone, Send, Users, Shield, Lock, Zap } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
 
 export default function FeaturesPage() {
@@ -12,12 +12,10 @@ export default function FeaturesPage() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Link href="/" className="flex items-center gap-2">
-                <MessageSquare className="h-8 w-8 text-green-600 dark:text-green-500" />
-                <span className="text-xl font-bold">WhatsApp Agent</span>
-              </Link>
-            </div>
+            <Link href="/" className="flex items-center gap-2">
+              <MessageSquare className="h-8 w-8 text-green-600 dark:text-green-500" />
+              <span className="text-xl font-bold">WhatsApp Agent</span>
+            </Link>
 
             <nav className="flex items-center gap-6">
               <Link href="/">

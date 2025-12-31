@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from 'next-themes'
-import { MessageSquare, Menu as MenuIcon, X, Sun, Moon, ArrowRight, Check, Star } from 'lucide-react'
+import { MessageSquare, Menu as MenuIcon, X, Sun, Moon, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export default function LandingPage() {
@@ -299,12 +299,13 @@ export default function LandingPage() {
               <p>© 2024 All rights reserved.</p>
               <div className="flex items-center gap-4 mt-2">
                 <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                  ))}
+                  <div className="h-4 w-4 text-yellow-500 fill-yellow-500"></div>
+                  <div className="h-4 w-4 text-yellow-500 fill-yellow-500"></div>
+                  <div className="h-4 w-4 text-yellow-500 fill-yellow-500"></div>
+                  <div className="h-4 w-4 text-yellow-500 fill-yellow-500"></div>
+                  <div className="h-4 w-4 text-yellow-500 fill-yellow-500"></div>
                 </div>
-                  <span className="text-xs">5.0 from 100+ reviews</span>
-                </div>
+                <span className="text-xs">5.0 from 100+ reviews</span>
               </div>
             </div>
           </div>
