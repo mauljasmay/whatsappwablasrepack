@@ -573,7 +573,7 @@ export default function WhatsAppAgent() {
   }
 
   const checkForUpdates = async () => {
-    setUpdateStatus(prev => ({ ...prev, checking: true }))
+    setDeviceUpdateStatus(prev => ({ ...prev, checking: true }))
 
     try {
       // Simulated GitHub API call - In production, use actual GitHub API
@@ -582,9 +582,9 @@ export default function WhatsAppAgent() {
       const hasUpdate = Math.random() > 0.5
       const latestVersion = '1.1.0'
 
-      setUpdateStatus({
+      setDeviceUpdateStatus({
         checking: false,
-        hasRefreshCw
+        deviceUpdate: true,
         latestVersion,
         currentVersion: '1.0.0',
         changelog: hasUpdate ? [
@@ -608,7 +608,7 @@ export default function WhatsAppAgent() {
         })
       }
     } catch (error) {
-      setUpdateStatus(prev => ({ ...prev, checking: false }))
+      setDeviceUpdateStatus(prev => ({ ...prev, checking: false }))
       toast({
         title: "Error",
         description: "Failed to check for updates",
@@ -633,7 +633,7 @@ export default function WhatsAppAgent() {
         description: "Please refresh the page to apply changes"
       })
 
-      setUpdateStatus({
+      setDeviceUpdateStatus({
         checking: false,
         deviceUpdate: false,
         latestVersion: updateStatus.latestVersion,
