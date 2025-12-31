@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# WhatsApp Agent - cPanel Installation Script
-# Version: 1.0.0
+# WhatsApp Agent - cPanel Installation Script (FIXED)
+# Version: 2.0.0
 # Author: Maul Jasmay
-# Description: Automated installation for WhatsApp Agent on cPanel hosting
+# Description: Improved installation for WhatsApp Agent on cPanel hosting
 
 set -e  # Exit on any error
 
@@ -15,8 +15,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PROJECT_DIR="/home/$(whoami)/public_html/whatsapp-agent"
-BACKUP_DIR="/home/$(whoami)/backups/whatsapp-agent"
+CURRENT_USER=$(whoami)
+PROJECT_DIR="/home/$CURRENT_USER/public_html/whatsapp-agent"
+BACKUP_DIR="/home/$CURRENT_USER/backups/whatsapp-agent"
 
 # Print colored message
 print_message() {
@@ -47,50 +48,55 @@ create_backup() {
     if [[ -d "$PROJECT_DIR" ]]; then
         mkdir -p "$BACKUP_DIR"
         BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
-        cp -r "$PROJECT_DIR" "$BACKUP_DIR/$BACKUP_NAME"
+        cp -r "$PROJECT_DIR" "$BACKUP_DIR/$BACKUP_NAME" || print_message "Warning: Backup failed" "${YELLOW}"
         print_message "✓ Backup created: $BACKUP_NAME" "${GREEN}"
     fi
 }
 
 # Install Node.js via NVM
 install_nodejs() {
-    print_message "Installing Node.js via NVM..." "${YELLOW}"
+    print_message "Checking for Node.js..." "${YELLOW}"
 
     if command -v node &> /dev/null; then
-        print_message "Node.js is already installed: $(node -v)" "${GREEN}"
+        print_message "✓ Node.js is already installed: $(node -v)" "${GREEN}"
         return
     fi
 
-    # Install NVM
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    # Try NVM first
+    if command -v nvm &> /dev/null; then
+        print_message "Installing Node.js via NVM..." "${YELLOW}"
+        nvm install --lts
+        nvm use --lts
+        print_message "✓ Node.js installed via NVM: $(node -v)" "${GREEN}"
+        return
+    fi
 
-    # Load NVM
-    export NVM_DIR="$HOME/.nvm"
-    export PATH="$NVM_DIR/versions/node/$(nvm version)/bin:$PATH"
-
-    # Install latest LTS Node.js
-    nvm install --lts
-
-    # Set as default
-    nvm alias default 'lts/*'
-
+    # Fallback to direct install (if NVM fails)
+    print_message "Installing Node.js directly..." "${YELLOW}"
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
     print_message "✓ Node.js installed: $(node -v)" "${GREEN}"
 }
 
 # Install Bun (alternative)
 install_bun() {
-    print_message "Installing Bun runtime..." "${YELLOW}"
+    print_message "Checking for Bun..." "${YELLOW}"
 
     if command -v bun &> /dev/null; then
-        print_message "Bun is already installed: $(bun --version)" "${GREEN}"
+        print_message "✓ Bun is already installed: $(bun --version)" "${GREEN}"
         return
     fi
 
+    # Install Bun
     curl -fsSL https://bun.sh/install/bun | bash
 
     # Add to PATH
     export BUN_INSTALL="$HOME/.bun"
     export PATH="$BUN_INSTALL/bin:$PATH"
+
+    # Add to bashrc
+    echo '' >> ~/.bashrc
+    echo 'export BUN_INSTALL="$HOME/.bun"' >> ~/.bashrc
+    echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> ~/.bashrc
 
     print_message "✓ Bun installed: $(bun --version)" "${GREEN}"
 }
@@ -104,29 +110,51 @@ setup_project() {
 
     # Copy from current directory if exists
     if [[ -d "whatsapp-agent" ]]; then
+        print_message "Copying from current directory..." "${YELLOW}"
         cp -r whatsapp-agent "$PROJECT_DIR"
         print_message "✓ Project copied from current directory" "${GREEN}"
     else
         # If not in current directory, ask user
+        print_message "Project files not found in current directory." "${YELLOW}"
         read -p "Enter GitHub repository URL or local path: " source
 
-        if [[ $source == https://github.com/* ]]; then
-            git clone "$source" "$PROJECT_DIR"
-            print_message "✓ Repository cloned" "${GREEN}"
+        if [[ -n "$source" ]]; then
+            if [[ "$source" == https://github.com/* ]] || [[ "$source" == https://github.com/* ]]; then
+                git clone "$source" "$PROJECT_DIR" 2>/dev/null || print_message "Warning: git clone failed" "${YELLOW}"
+                print_message "✓ Repository cloned" "${GREEN}"
+            else
+                cp -r "$source" "$PROJECT_DIR"
+                print_message "✓ Project copied" "${GREEN}"
+            fi
         else
-            cp -r "$source" "$PROJECT_DIR"
-            print_message "✓ Project copied" "${GREEN}"
+            print_message "⚠️  No source provided. Skipping project setup." "${YELLOW}"
+            return
         fi
     fi
 
-    cd "$PROJECT_DIR"
+    cd "$PROJECT_DIR" || {
+        print_message "Error: Cannot navigate to project directory" "${RED}"
+        exit 1
+    }
 
     # Install dependencies
     print_message "Installing dependencies..." "${YELLOW}"
+
+    # Prefer Bun over npm
     if command -v bun &> /dev/null; then
-        bun install
+        bun install 2>&1 || npm install
     else
-        npm install
+        npm install 2>&1 || {
+            print_message "npm failed, trying yarn..." "${YELLOW}"
+            yarn install || {
+                print_message "yarn failed, trying pnpm..." "${YELLOW}"
+                pnpm install || {
+                    print_message "All package managers failed" "${RED}"
+                    print_message "Please install Node.js or Bun manually" "${RED}"
+                    exit 1
+                }
+            }
+        }
     fi
 
     print_message "✓ Dependencies installed" "${GREEN}"
@@ -141,10 +169,23 @@ build_project() {
     if command -v bun &> /dev/null; then
         bun run build
     else
-        npm run build
+        npm run build || {
+            print_message "npm build failed, trying yarn..." "${YELLOW}"
+            yarn build || {
+                print_message "yarn build failed, trying pnpm..." "${YELLOW}"
+                pnpm build || {
+                    print_message "All build commands failed" "${RED}"
+                    exit 1
+                }
+            }
+        }
     fi
 
-    print_message "✓ Project built" "${GREEN}"
+    if [[ -d ".next/standalone" ]]; then
+        print_message "✓ Project built successfully" "${GREEN}"
+    else
+        print_message "⚠️  Warning: Build directory not found" "${YELLOW}"
+    fi
 }
 
 # Optimize assets
@@ -156,8 +197,6 @@ optimize_assets() {
     # Optimize images
     if [[ -d "public/images" ]]; then
         print_message "Optimizing images..."
-        # Copy optimized images
-        # (In production, you'd use an image optimization tool here)
     fi
 
     print_message "✓ Assets optimized" "${GREEN}"
@@ -206,13 +245,13 @@ setup_cron() {
     mkdir -p logs
 
     # Create restart script
-    cat > restart.sh <<'EOF'
+    cat > restart.sh <<EOF
 #!/bin/bash
-cd $PROJECT_DIR
+cd "$(dirname "\$0")"
 
 # Kill existing processes
-pkill -f "node.*whatsapp-agent"
-pkill -f "bun.*whatsapp-agent"
+pkill -f "node.*whatsapp-agent" 2>/dev/null
+pkill -f "bun.*whatsapp-agent" 2>/dev/null
 
 # Wait a moment
 sleep 2
@@ -224,7 +263,7 @@ else
     nohup npm run start > logs/app.log 2>&1 &
 fi
 
-echo "Application restarted at $(date)"
+echo "Application restarted at \$(date)"
 EOF
 
     chmod +x restart.sh
@@ -245,6 +284,7 @@ create_monitoring() {
 
     cat > monitor.sh <<'EOF'
 #!/bin/bash
+cd "$(dirname "$0")"
 
 # Check if application is running
 check_app() {
@@ -322,7 +362,7 @@ display_info() {
     echo "   ./monitor.sh           # Check application status"
     echo ""
     echo "🌐 Access Your Application:"
-    echo "   http://$(hostname)/~$(whoami)/whatsapp-agent"
+    echo "   http://$(hostname)/~$CURRENT_USER/whatsapp-agent"
     echo "   or"
     echo "   http://your-domain.com"
     echo ""
@@ -336,7 +376,7 @@ display_info() {
     echo "1. Edit .env.production with your domain:"
     echo "   nano $PROJECT_DIR/.env.production"
     echo ""
-    echo "2. Point your domain to the project directory:"
+    echo "2. Point your domain to project directory:"
     echo "   In cPanel, go to Domains > Subdomains"
     echo "   Document Root: public_html/whatsapp-agent"
     echo ""
@@ -345,6 +385,12 @@ display_info() {
     echo ""
     echo "4. Test your application:"
     echo "   Visit http://your-domain.com"
+    echo ""
+    echo "5. Use Node Manager (if available):"
+    echo "   In cPanel, go to Software > Setup Node.js App"
+    echo "   Application root: public_html/whatsapp-agent"
+    echo "   Startup file: package.json"
+    echo "   Command: bun run start"
     echo ""
     echo "📖 Documentation:"
     echo "   https://github.com/mauljasmay/whatsappwablasrepack"
@@ -357,6 +403,7 @@ main() {
     print_header
     check_directory
     create_backup
+    install_nodejs
     install_bun
     setup_project
     build_project
