@@ -1,0 +1,182 @@
+# WhatsApp Agent - cPanel .htaccess Configuration
+# Optimized for maximum speed and performance
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS (uncomment if you have SSL certificate)
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Remove trailing slash
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} (.+)/$
+  RewriteRule ^ %1 [L,R=301]
+</IfModule>
+
+# Enable Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml application/x-javascript application/rss+xml application/atom+xml
+  BrowserMatch ^Mozilla/4 gzip-only-text/html text/plain text/xml text/css application/javascript application/javascript application/json
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-gzip-text/html text/plain text/xml text/css application/javascript application/javascript application/json
+  Header append Vary User-Agent
+</IfModule>
+
+# Cache Control Headers
+<IfModule mod_headers.c>
+  # Cache static assets for 1 year
+  <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp|avif)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Cache CSS and JS for 30 days
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+
+  # Cache fonts for 1 year
+  <FilesMatch "\.(woff|woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Disable cache for HTML and API routes
+  <FilesMatch "\.(html|json)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+
+  # Security Headers
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Gzip Compression
+<IfModule mod_gzip.c>
+  # Enable Gzip
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+
+  # Compress everything except images and videos
+  SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|bmp|webp|avif)$ no-gzip
+</IfModule>
+
+# Brotli Compression (if available)
+<IfModule mod_brotli.c>
+  # Enable Brotli
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css text/javascript application/javascript application/json
+
+  # Compress everything except images
+  SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|bmp|webp|avif)$ no-brotli
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType text/css "access plus 30 days"
+  ExpiresByType application/javascript "access plus 30 days"
+  ExpiresByType application/x-javascript "access plus 30 days"
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType font/otf "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Security Rules
+<IfModule mod_authz_core.c>
+  # Protect sensitive files
+  <FilesMatch "\.(env|git|htaccess|log)$">
+    Require all denied
+  </FilesMatch>
+
+  # Protect configuration files
+  <FilesMatch "^next.config">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+
+# PHP Configuration (disable execution in public folder)
+<IfModule mod_php.c>
+  # Disable PHP execution in public folder for security
+  php_flag engine off
+  <FilesMatch "\.php$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+
+# Prevent Directory Browsing
+Options -Indexes
+
+# Block access to hidden files
+<FilesMatch "^\.(.git|.env|.svn)$">
+  Require all denied
+</FilesMatch>
+
+# Custom Error Pages
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html
+ErrorDocument 502 /502.html
+ErrorDocument 503 /503.html
+
+# File Upload Size Limit
+LimitRequestBody 10485760
+
+# Protect against HTTP Flood
+<IfModule mod_security2.c>
+  SecRequestBodyNoFilesLimit 10
+  SecRequestBodyLimit 10485760
+</IfModule>
+
+# CORS Configuration
+<IfModule mod_headers.c>
+  <IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+  </IfModule>
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+  Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+  Header set Access-Control-Max-Age "86400"
+  Header set Access-Control-Allow-Credentials "true"
+</IfModule>
+
+# Server Performance
+<IfModule mpm_prefork.c>
+  StartServers 2
+  MinSpareServers 2
+  MaxSpareServers 5
+  ServerLimit 256
+</IfModule>
+
+<IfModule mpm_event.c>
+  StartServers 2
+  MinSpareThreads 25
+  MaxSpareThreads 75
+  MaxRequestWorkers 150
+  ThreadsPerChild 25
+</IfModule>
+
+# Connection Timeouts
+<IfModule mod_core.c>
+  KeepAlive On
+  KeepAliveTimeout 5
+  MaxKeepAliveRequests 100
+  Timeout 60
+  Timeout 300
+</IfModule>
+
+# Disable ETags for better performance
+<IfModule mod_headers.c>
+  Header unset ETag
+  FileETag None
+</IfModule>
