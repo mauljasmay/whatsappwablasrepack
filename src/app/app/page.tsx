@@ -74,7 +74,6 @@ import {
   Lock,
   Unlock,
   Github,
-  RefreshCw
   Menu as MenuIcon,
   User,
   ChevronDown,

@@ -10,10 +10,17 @@ export default function LandingPage() {
   const { theme, setTheme } = useTheme()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm:bg-background/60">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
@@ -143,6 +150,15 @@ export default function LandingPage() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="text-base sm:text-lg flex-1"
+                  onClick={() => scrollToSection('features')}
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             </div>
 
@@ -173,6 +189,10 @@ export default function LandingPage() {
                       <div className="h-2 w-2 mt-2 rounded-full bg-green-300 shrink-0"></div>
                       <p>API access for integrations</p>
                     </div>
+                    <div className="flex items-start gap-3">
+                      <div className="h-2 w-2 mt-2 rounded-full bg-green-300 shrink-0"></div>
+                      <p>Full admin dashboard control</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -182,7 +202,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Preview Section */}
-      <section className="py-16 sm:py-20 bg-muted/30">
+      <section id="features" className="py-16 sm:py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why Choose WhatsApp Agent?</h2>
@@ -198,6 +218,10 @@ export default function LandingPage() {
                 <p className="text-muted-foreground">
                   Connect and manage multiple WhatsApp devices from one dashboard
                 </p>
+                <div className="mt-4 text-green-600 dark:text-green-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                  <span className="text-sm font-medium">Learn more</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </Link>
             <Link href="/app/features" className="block">
@@ -206,6 +230,10 @@ export default function LandingPage() {
                 <p className="text-muted-foreground">
                   Send thousands of messages at once with personalization support
                 </p>
+                <div className="mt-4 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                  <span className="text-sm font-medium">Learn more</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </Link>
             <Link href="/app/features" className="block">
@@ -214,6 +242,10 @@ export default function LandingPage() {
                 <p className="text-muted-foreground">
                   Track message status in real-time with WebSocket updates
                 </p>
+                <div className="mt-4 text-purple-600 dark:text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                  <span className="text-sm font-medium">Learn more</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </Link>
             <Link href="/app/features" className="block">
@@ -222,6 +254,10 @@ export default function LandingPage() {
                 <p className="text-muted-foreground">
                   Full CRUD operations with import/export from CSV/Excel
                 </p>
+                <div className="mt-4 text-orange-600 dark:text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                  <span className="text-sm font-medium">Learn more</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </Link>
             <Link href="/app/features" className="block">
@@ -230,6 +266,10 @@ export default function LandingPage() {
                 <p className="text-muted-foreground">
                   Full API documentation for seamless integrations
                 </p>
+                <div className="mt-4 text-red-600 dark:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                  <span className="text-sm font-medium">Learn more</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </Link>
             <Link href="/app/features" className="block">
@@ -238,6 +278,10 @@ export default function LandingPage() {
                 <p className="text-muted-foreground">
                   Powerful admin panel with GitHub update integration
                 </p>
+                <div className="mt-4 text-cyan-600 dark:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                  <span className="text-sm font-medium">Learn more</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </Link>
           </div>
@@ -305,7 +349,8 @@ export default function LandingPage() {
                   <div className="h-4 w-4 text-yellow-500 fill-yellow-500"></div>
                   <div className="h-4 w-4 text-yellow-500 fill-yellow-500"></div>
                 </div>
-                <span className="text-xs">5.0 from 100+ reviews</span>
+                  <span className="text-xs">5.0 from 100+ reviews</span>
+                </div>
               </div>
             </div>
           </div>
